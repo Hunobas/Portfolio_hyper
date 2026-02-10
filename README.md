@@ -10,18 +10,18 @@
 
 ### 1. 스팀 게임 출시 경험 — My Little Puppy (드림모션 인턴)
 
-![mylittlepuppy_banner](https://github.com/user-attachments/assets/dbb75fdb-3d8d-4dd2-866a-2f7cc92e8bc0)
+![그림5](https://github.com/user-attachments/assets/2282e694-733e-4fde-b230-28a5b101ba55)
 
 38인 팀에서 3개월간 스팀 데모 출시에 참여했습니다. NPC 애니메이션 관련 버그 3건을 직접 추적·해결하고, 다국어 폰트 시스템 및 슈퍼점프 콘텐츠를 담당했습니다.
 
 <details>
-<summary><b>버그 수정 사례: 루트모션 회전이 프레임에 따라 달라지는 문제</b></summary>
+<summary><b>버그 수정 사례 1: 루트모션 회전이 프레임 컨디션에 따라 달라지는 문제</b></summary>
 
 | 문제 상태 | 정상 상태 |
 |------|---------|
-| ![문제](https://github.com/user-attachments/assets/c038982c-4e66-4c04-a3c1-a4878d3d48c5) | ![정상](https://github.com/user-attachments/assets/f0d4974a-a54d-4b7d-870c-e7b6ad794d5c) |
+| ![ezgif com-video-to-gif-converter (4)](https://github.com/user-attachments/assets/c038982c-4e66-4c04-a3c1-a4878d3d48c5) | ![ezgif com-video-to-gif-converter (5)](https://github.com/user-attachments/assets/f0d4974a-a54d-4b7d-870c-e7b6ad794d5c) |
 
-**증상:** FPS가 낮으면 정상 회전, 정상 FPS에서는 중간에 멈춤
+**증상:** 게임 FPS가 낮으면 정상 회전, 정상 FPS에서는 회전이 중간에 멈춤
 
 **원인 추적:**
 1. 소수점 오차 가설 → 검증 결과 0.1도 미만으로 육안 차이와 무관
@@ -33,15 +33,28 @@
 </details>
 
 <details>
-<summary><b>버그 수정 사례: 루트모션 종료 시 앞으로 튀는 문제</b></summary>
+<summary><b>>버그 수정 사례 2: 루트모션 종료 시 앞으로 튀어나가는 문제</b></summary>
 
 | 문제 상태 | 정상 상태 |
 |------|---------|
-| ![문제](https://github.com/user-attachments/assets/4e19abda-d7a0-41ea-a84e-c6ffce35ca67) | ![정상](https://github.com/user-attachments/assets/53eb6482-83c2-4f4d-bbe5-2e215c2b7f15) |
+| ![02_-ezgif com-video-to-gif-converter (3)](https://github.com/user-attachments/assets/4e19abda-d7a0-41ea-a84e-c6ffce35ca67) | ![02_-ezgif com-video-to-gif-converter (4)](https://github.com/user-attachments/assets/53eb6482-83c2-4f4d-bbe5-2e215c2b7f15) |
 
-**원인:** Walk → RootMotion → Idle 전환 시, Walk의 `WalkToIdle` 속도값이 Idle까지 전달됨
+**원인:** Walk → RootMotion → Idle 전환 시, Walk 상태의 `WalkToIdle` 속도값이 초기화되지 않고 Idle까지 전달됨
 
 **해결:** 루트모션 상태머신 종료 시점에 Idle 블렌딩 속도를 0으로 초기화
+
+</details>
+
+<details>
+<summary><b>>버그 수정 사례 3: 컷씬 일시정지 시 NPC 위치가 튀는 문제</b></summary>
+
+| 문제 상태 | 정상 상태 |
+|------|---------|
+| ![PlayableDirector_-ezgif com-video-to-gif-converter (1)](https://github.com/user-attachments/assets/436f5f08-5091-4b73-bb91-3871885ca447) | ![ezgif com-video-to-gif-converter (6)](https://github.com/user-attachments/assets/9bb6594b-afca-43f8-b29a-31fe61e320e3) |
+
+**원인:** PlayableDirector가 액터 위치를 직접 수정하는데, 컷씬 모드는 `LateUpdate`에서 위치를 재조정하지만 일시정지 모드는 이 처리가 없었음
+
+**해결:** 일시정지 모드에서도 이전 모드가 컷씬이면 `HandleGameActors()` 호출
 
 </details>
 
